@@ -15,7 +15,7 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-  origin: 'https://zippy-chimera-f90246.netlify.app',
+  origin: 'https://social-mediaweb-application.netlify.app',
   credentials: true
 }));
 
@@ -36,7 +36,7 @@ app.use('/api/chat', chatRoutes);
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'https://zippy-chimera-f90246.netlify.app',
+    origin: 'https://social-mediaweb-application.netlify.app',
   },
 });
 
