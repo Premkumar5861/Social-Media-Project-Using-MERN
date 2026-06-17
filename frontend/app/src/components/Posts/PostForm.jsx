@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { Form,Button } from 'react-bootstrap';
-import axios from 'axios';
+import axios from '../../utils/axiosConfig';
 import Message from "../Message";
 import Loader from '../Loader';
 
@@ -22,15 +22,8 @@ const submitHandler=async(e)=>{
 
     try{
         setLoading(true);
-        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-        const config={
-            headers:{
-                'Content-Type':'multipart/form-data',
-                Authorization: `Bearer ${userInfo.token}`
-            },
-        };
 
-        await axios.post('/api/posts',formData,config)
+        await axios.post('/api/posts',formData)
         setContent("");
         setImage(null);
         fetchPosts();

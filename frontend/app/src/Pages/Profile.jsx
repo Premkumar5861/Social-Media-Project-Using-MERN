@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../utils/axiosConfig";
 import React, { useState, useEffect } from "react";
 import {
   Container,
@@ -13,6 +13,16 @@ import { Link, useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import QRcode from "qrcode";
+
+// Helper function to get full image URL
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return null;
+  if (imagePath.startsWith('http')) return imagePath;
+  const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  const fullUrl = `${apiUrl}${imagePath}`;
+  console.log('📸 Image URL:', imagePath, '→', fullUrl);
+  return fullUrl;
+};
 
 function Profile() {
   const navigate = useNavigate();
@@ -39,17 +49,11 @@ function Profile() {
           return;
         }
         const parsedUser = JSON.parse(userInfo);
-        const config = {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${parsedUser.token}`,
-          },
-        };
-        const { data } = await axios.get("/api/users/profile", config);
+        
+        const { data } = await axios.get("/api/users/profile");
         setUser(data);
         const { data: postsData } = await axios.get(
-          `/api/posts/user/${parsedUser._id}`,
-          config,
+          `/api/posts/user/${parsedUser._id}`
         );
         setUserPost(postsData);
 
@@ -98,15 +102,9 @@ function Profile() {
         return;
       }
       const parsedUser = JSON.parse(userInfo);
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${parsedUser.token}`,
-        },
-      };
+      
       const { data } = await axios.get(
-        `/api/users/search?keyword=${keyword}`,
-        config,
+        `/api/users/search?keyword=${keyword}`
       );
       setResult(data);
     } catch (error) {
@@ -125,14 +123,7 @@ function Profile() {
       setLoading(true);
       const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userInfo.token}`,
-        },
-      };
-
-      const { data } = await axios.post(`/api/chat`, { userId }, config);
+      const { data } = await axios.post(`/api/chat`, { userId });
       navigate(`/chat/${data._id}`);
     } catch (error) {
       setLoading(false);
@@ -156,20 +147,13 @@ function Profile() {
         return;
       }
       const parsedUser = JSON.parse(userInfo);
-      const config = {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${parsedUser.token}`,
-        },
-      };
-
+      
       const formData = new FormData();
       formData.append("profilePicture", profilePicture);
 
       const { data } = await axios.post(
         "/api/users/profile/uploads",
-        formData,
-        config,
+        formData
       );
       setMessage("Profile picture uploaded successfully");
       setUser({ ...user, profilePicture: data.profilePicture });
@@ -190,16 +174,7 @@ function Profile() {
       setMessage("");
       setError("");
 
-      const userInfo = localStorage.getItem("userInfo");
-      const parsedUser = JSON.parse(userInfo);
-
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${parsedUser.token}`,
-        },
-      };
-      const { data } = await axios.post(`/api/auth/enable-2fa`, {}, config);
+      const { data } = await axios.post(`/api/auth/enable-2fa`, {});
       // setSecret(data.secret);
       const otpauthUrl = data.secret;
       QRcode.toDataURL(otpauthUrl, { width: 200, margin: 2 }, (err, url) => {
@@ -225,20 +200,10 @@ function Profile() {
     try {
       setLoading(true);
 
-      const userInfo = localStorage.getItem("userInfo");
-      const parsedUser = JSON.parse(userInfo);
-
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${parsedUser.token}`,
-        },
-      };
-
-      await axios.post(`/api/users/follow/${userId}`, {}, config);
+      await axios.post(`/api/users/follow/${userId}`, {});
       setMessage("User followed succesfully");
 
-      const { data } = await axios.get("/api/users/profile", config);
+      const { data } = await axios.get("/api/users/profile");
       setUser(data);
     } catch (error) {
       setError(
@@ -254,19 +219,10 @@ function Profile() {
   const unFollowUser = async (userId) => {
     try {
       setLoading(true);
-      const userInfo = localStorage.getItem("userInfo");
-      const parsedUser = JSON.parse(userInfo);
 
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${parsedUser.token}`,
-        },
-      };
-
-      await axios.post(`/api/users/unfollow/${userId}`, {}, config);
+      await axios.post(`/api/users/unfollow/${userId}`, {});
       setMessage("User UnFollowed Successfully.");
-      const { data } = await axios.get("/api/users/profile", config);
+      const { data } = await axios.get("/api/users/profile");
       setUser(data);
     } catch (error) {
       setError(
@@ -293,7 +249,7 @@ function Profile() {
               <div className="text-center">
                 {user.profilePicture ? (
                   <img
-                    src={user.profilePicture}
+                    src={getImageUrl(user.profilePicture)}
                     alt="Profile"
                     className="rounded-circle"
                     width="100"
@@ -440,7 +396,7 @@ function Profile() {
                               <Card.Img
                                 variant="top"
                                 src={
-                                  follower.profilePicture ||
+                                  getImageUrl(follower.profilePicture) ||
                                   "https://via.placeholder.com/50"
                                 }
                                 alt={follower.username}
@@ -488,7 +444,7 @@ function Profile() {
                               <Card.Img
                                 variant="top"
                                 src={
-                                  following.profilePicture ||
+                                  getImageUrl(following.profilePicture) ||
                                   "https://via.placeholder.com/50"
                                 }
                                 alt={following.username}

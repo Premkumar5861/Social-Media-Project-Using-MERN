@@ -14,15 +14,33 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
-app.use(express.json());
-connectDB();
+// CORS configuration for deployed frontend
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'https://socialmedia-backend-5j7u.onrender.com',
+    'https://frontapp.io',
+    process.env.FRONTEND_URL
+  ].filter(Boolean),
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
+app.use(express.json());
+
+// Root route
 app.get("/", (req, res) => {
     res.send('API is running')
 });
 
-app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+// Serve static files from uploads directory
+const uploadsPath = path.join(__dirname, 'uploads');
+console.log('📁 Serving static files from:', uploadsPath);
+app.use('/uploads', express.static(uploadsPath));
+
+connectDB();
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
@@ -31,7 +49,15 @@ app.use('/api/chat', chatRoutes);
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: '*',
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:5173',
+      'https://socialmedia-backend-5j7u.onrender.com',
+      'https://frontapp.io',
+      process.env.FRONTEND_URL
+    ].filter(Boolean),
+    credentials: true,
+    methods: ['GET', 'POST']
   },
 });
 

@@ -1,8 +1,16 @@
 import React, { useState } from "react";
 import { Form, Button, Card } from "react-bootstrap";
-import axios from "axios";
+import axios from "../../utils/axiosConfig";
 import Loader from "../Loader";
 import Message from "../Message";
+
+// Helper function to get full image URL
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return null;
+  if (imagePath.startsWith('http')) return imagePath;
+  const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  return `${apiUrl}${imagePath}`;
+};
 
 function PostList({ posts, fetchPosts, startChartHandler }) {
   const [loading, setLoading] = useState(false);
@@ -18,17 +26,10 @@ function PostList({ posts, fetchPosts, startChartHandler }) {
     console.log("content:", commentContent[postId]);
     try {
       setLoading(true);
-      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userInfo.token}`,
-        },
-      };
+
       await axios.post(
         `/api/posts/${postId}/comments`,
-        { content: commentContent[postId] },
-        config,
+        { content: commentContent[postId] }
       );
       setCommentContent({ ...commentContent, [postId]: "" });
       fetchPosts();
@@ -46,14 +47,8 @@ function PostList({ posts, fetchPosts, startChartHandler }) {
     if (window.confirm("Are you sure you want to delete this post?"))
       try {
         setLoading(true);
-        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-        const config = {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userInfo.token}`,
-          },
-        };
-        await axios.delete(`/api/posts/${postId}`, config);
+
+        await axios.delete(`/api/posts/${postId}`);
         fetchPosts();
         setLoading(false);
       } catch (error) {
@@ -134,7 +129,7 @@ function PostList({ posts, fetchPosts, startChartHandler }) {
     marginBottom: '12px'
   }}>
     <img
-      src={post.image}
+      src={getImageUrl(post.image)}
       alt="Post image"
       style={{
         width: '100%',

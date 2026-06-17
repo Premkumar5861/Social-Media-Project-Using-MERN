@@ -9,7 +9,7 @@ import {
   Card,
 } from "react-bootstrap";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import axios from "../../utils/axiosConfig";
 import Loader from "../Loader";
 import Message from "../Message";
 
@@ -117,16 +117,9 @@ function Login() {
       setMessage("");
       setError("");
 
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      };
-
-      const { data } = await axios.post("/api/auth/login", formValues, config);
+      const { data } = await axios.post("/api/auth/login", formValues);
       localStorage.setItem("userInfo", JSON.stringify(data));
       clearForm();
-      window.location.reload();
       navigate('/profile');
     } catch (error) {
       setError(
