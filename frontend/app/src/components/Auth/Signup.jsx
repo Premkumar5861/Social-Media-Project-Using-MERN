@@ -12,7 +12,7 @@ import {
 import Message from "../Message";
 import Loader from "../Loader";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import axios from 'axios'
+import axios from '../../utils/axiosConfig'
 
 function Signup() {
   const navigate = useNavigate();

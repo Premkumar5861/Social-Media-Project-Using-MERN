@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../utils/axiosConfig";
 import React, { useState, useEffect } from "react";
 import {
   Container,
@@ -13,6 +13,13 @@ import { Link, useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import QRcode from "qrcode";
+
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return null;
+  if (imagePath.startsWith('http')) return imagePath;
+  const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  return `${apiUrl}${imagePath}`;
+};
 
 function Profile() {
   const navigate = useNavigate();
@@ -293,7 +300,7 @@ function Profile() {
               <div className="text-center">
                 {user.profilePicture ? (
                   <img
-                    src={user.profilePicture}
+                  src={getImageUrl(user.profilePicture)}
                     alt="Profile"
                     className="rounded-circle"
                     width="100"
@@ -439,10 +446,8 @@ function Profile() {
                             <Link to={`/user/${follower._id}`}>
                               <Card.Img
                                 variant="top"
-                                src={
-                                  follower.profilePicture ||
-                                  "https://via.placeholder.com/50"
-                                }
+                               src={getImageUrl(follower.profilePicture) || "https://via.placeholder.com/50"}
+
                                 alt={follower.username}
                                 className="rounded-circle me-2"
                                 style={{
@@ -487,10 +492,8 @@ function Profile() {
                             <Link to={`/user/${following._id}`}>
                               <Card.Img
                                 variant="top"
-                                src={
-                                  following.profilePicture ||
-                                  "https://via.placeholder.com/50"
-                                }
+                                src={getImageUrl(following.profilePicture) || "https://via.placeholder.com/50"}
+
                                 alt={following.username}
                                 className="rounded-circle me-2"
                                 style={{
@@ -532,7 +535,7 @@ function Profile() {
           borderRadius: '4px'
         }}>
           <img
-            src={post.image || 'https://via.placeholder.com/150'}
+            src={getImageUrl(post.image) || 'https://via.placeholder.com/150'}
             alt="Post"
             style={{
               width: '100%',

@@ -9,9 +9,9 @@ import {
   Card,
 } from "react-bootstrap";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
 import Loader from "../Loader";
 import Message from "../Message";
+import axios from "../../utils/axiosConfig";
 
 function Login() {
   const navigate = useNavigate();

@@ -77,7 +77,7 @@ function PostList({ posts, fetchPosts, startChartHandler }) {
                   <div className="d-flex align-items-center">
                     <img
                       src={
-                        post?.user?.profilePicture ||
+                        getImageUrl(post?.user?.profilePicture) ||
                         "https://via.placeholder.com/50"
                       }
                       alt={post?.user?.username}

@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { ListGroup, Button } from "react-bootstrap";
-import axios from "axios";
+import axios from "../../utils/axiosConfig";
 import { Link, useNavigate } from "react-router-dom";
 import Message from "../Message";
 import Loader from "../Loader";
+
+
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return null;
+  if (imagePath.startsWith('http')) return imagePath;
+  const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  return `${apiUrl}${imagePath}`;
+};
 
 function ChatList() {
   const [chats, setChats] = useState([]);
@@ -63,7 +71,7 @@ function ChatList() {
                   >
                     <img
                       src={
-                        user.profilePicture || "https://via.placeholder.com/50"
+                        getImageUrl(user.profilePicture)|| "https://via.placeholder.com/50"
                       }
                       alt={user.username}
                       className="rounded-circle me-2"

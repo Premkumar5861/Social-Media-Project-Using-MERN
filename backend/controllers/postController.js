@@ -2,32 +2,9 @@ const asyncHandler = require('express-async-handler');
 const multer = require('multer');
 const path = require('path');
 const Post = require('../models/Post');
+const { upload } = require('../config/cloudinary');
 
 
-// set up multer for file uploads
-
-const storage = multer.diskStorage({
-    destination(req,file,cb){
-        cb(null,'uploads/')
-    },
-    filename(req,file,cb){
-   cb(
-      null,
-      `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
-   )
-}})
-
-const upload = multer({
-    storage,
-    fileFilter(req,file,cb){
-        if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype ==='image/jpg'){
-            cb(null,true);
-        }
-        else{
-            cb(new Error( 'Invalid file type. Only JPEG,JPG,and PNG are allowed.') )
-        }
-    }
-})
 
 
 //Create a new post.
@@ -39,7 +16,7 @@ const createPost =[
           console.log(req.file);
     console.log(req.body);
         const {content } = req.body;
-        const image = req.file ? `/uploads/${req.file.filename}`: null;
+        const image = req.file ? req.file.path : null;
 
         const post = new Post ({
             user:req.user._id,
