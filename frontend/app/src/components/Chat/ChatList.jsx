@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ListGroup, Button } from "react-bootstrap";
-import axios from "../../utils/axiosConfig";
+import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import Message from "../Message";
 import Loader from "../Loader";
@@ -16,8 +16,14 @@ function ChatList() {
   const fetchChats = async () => {
     try {
       setLoading(true);
+      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
 
-      const { data } = await axios.get("/api/chat");
+      const { data } = await axios.get("/api/chat", config);
       setChats(data);
     } catch (error) {
       setError(

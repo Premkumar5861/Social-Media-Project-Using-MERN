@@ -7,8 +7,7 @@ const User = require('../models/User');
 
 const storage = multer.diskStorage({
     destination(req,file,cb){
-        const uploadDir = path.join(__dirname, '../uploads');
-        cb(null, uploadDir);
+        cb(null,'uploads/')
     },
     filename(req,file,cb){
         cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`)
@@ -37,9 +36,7 @@ const uploadProfilePicture = [
         const user = await User.findById(req.user._id);
 
         if(user){
-            if(req.file){
-                user.profilePicture =`/uploads/${req.file.filename}`;
-            }
+            user.profilePicture =`/uploads/${req.file.filename}`;
             await user.save();
 
 

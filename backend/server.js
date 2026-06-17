@@ -8,39 +8,27 @@ const chatRoutes = require('./routes/chatRoutes');
 const path = require('path');
 const http = require('http');
 const { Server } = require('socket.io');
-const cors = require('cors');
 
 dotenv.config();
 
-const app = express();
+const cors = require('cors');
 
-// CORS configuration for deployed frontend
 app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'http://localhost:5173',
-    'https://socialmedia-backend-5j7u.onrender.com',
-    'https://frontapp.io',
-    process.env.FRONTEND_URL
-  ].filter(Boolean),
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin: process.env.FRONTEND_URL || '*',
+  credentials: true
 }));
 
+
+const app = express();
 app.use(express.json());
 
-// Root route
+connectDB();
+
 app.get("/", (req, res) => {
     res.send('API is running')
 });
 
-// Serve static files from uploads directory
-const uploadsPath = path.join(__dirname, 'uploads');
-console.log('📁 Serving static files from:', uploadsPath);
-app.use('/uploads', express.static(uploadsPath));
-
-connectDB();
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
@@ -49,15 +37,7 @@ app.use('/api/chat', chatRoutes);
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: [
-      'http://localhost:3000',
-      'http://localhost:5173',
-      'https://socialmedia-backend-5j7u.onrender.com',
-      'https://frontapp.io',
-      process.env.FRONTEND_URL
-    ].filter(Boolean),
-    credentials: true,
-    methods: ['GET', 'POST']
+    origin: '*',
   },
 });
 

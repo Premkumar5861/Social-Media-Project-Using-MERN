@@ -34,8 +34,14 @@ function Chat() {
   const fetchMessages = async () => {
     try {
       setLoading(true);
+      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
 
-      const { data } = await axios.get(`/api/chat/${chatId}`);
+      const { data } = await axios.get(`/api/chat/${chatId}`, config);
       setMessages(data); // Assuming data contains the array of messages
       setLoading(false);
     } catch (error) {
@@ -58,10 +64,17 @@ function Chat() {
     e.preventDefault();
     try {
       const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
 
       const { data } = await axios.post(
         `/api/chat/${chatId}/message`,
-        { content: messageContent }
+        { content: messageContent },
+        config,
       );
       const lastMessage = data.messages[data.messages.length - 1]; // Get the last message
 

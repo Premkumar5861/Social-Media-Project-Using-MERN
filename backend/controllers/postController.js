@@ -8,8 +8,7 @@ const Post = require('../models/Post');
 
 const storage = multer.diskStorage({
     destination(req,file,cb){
-        const uploadDir = path.join(__dirname, '../uploads');
-        cb(null, uploadDir);
+        cb(null,'uploads/')
     },
     filename(req,file,cb){
    cb(

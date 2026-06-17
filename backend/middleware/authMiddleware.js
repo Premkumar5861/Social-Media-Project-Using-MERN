@@ -8,20 +8,13 @@ const protect = async ( req,res,next)=>{
     if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
         try{
             token = req.headers.authorization.split(' ')[1];
-            console.log('🔐 Token received:', token.substring(0, 20) + '...');
-            console.log('🔑 JWT_SECRET:', process.env.JWT_SECRET);
-            
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            console.log('✅ Token verified, decoded:', decoded);
-            
+            const decoded = jwt.verify(token,process.env.JWT_SECRET);
             req.user = await User.findById(decoded.id).select('-password');
-            next();
-            return;
+            next()
         }
         catch(error){
-            console.log('❌ Token verification failed:', error.message);
             res.status(401).json({message: 'Not authorized, token failed'})
-            return;
+
         }
     }
 

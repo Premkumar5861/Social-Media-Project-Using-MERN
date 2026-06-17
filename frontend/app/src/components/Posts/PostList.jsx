@@ -9,7 +9,7 @@ const getImageUrl = (imagePath) => {
   if (!imagePath) return null;
   if (imagePath.startsWith('http')) return imagePath;
   const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-  return `${apiUrl}${imagePath}`;
+  return `${apiUrl}${imagePath}`; 
 };
 
 function PostList({ posts, fetchPosts, startChartHandler }) {

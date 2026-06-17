@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import axios from "../utils/axiosConfig";
+import axios from "axios";
 import PostForm from "../components/Posts/PostForm";
 import PostList from "../components/Posts/PostList";
 import { useNavigate } from "react-router-dom";
@@ -17,8 +17,16 @@ function Home() {
   const startChartHandler = async (userId) => {
     try {
       setLoading(true);
+      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
-      const {data}= await axios.post(`/api/chat`,{userId})
+      const config = {
+        headers: {
+          "Content-Type":'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      const {data}= await axios.post(`/api/chat`,{userId},config)
       navigate(`/chat/${data._id}`)
     } catch (error) {
       setLoading(false);
@@ -33,8 +41,14 @@ function Home() {
   const fetchChats = async()=>{
     try{
       setLoading(true);
+      const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+      const config ={
+        headers:{
+          Authorization : `Bearer ${userInfo.token}`,
+        },
+      };
 
-      const {data} = await axios.get(`/api/chat`)
+      const {data} = await axios.get(`/api/chat`,config)
       setChats(data);
  
 
@@ -54,8 +68,14 @@ function Home() {
   const fetchPosts = async () => {
     try {
       setLoading(true);
+      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
-      const { data } = await axios.get("/api/posts");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+      const { data } = await axios.get("/api/posts", config);
       setPosts(data);
       setLoading(false);
     } catch (error) {

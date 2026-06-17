@@ -12,7 +12,7 @@ import {
 import Message from "../Message";
 import Loader from "../Loader";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import axios from '../../utils/axiosConfig'
+import axios from 'axios'
 
 function Signup() {
   const navigate = useNavigate();
@@ -148,7 +148,12 @@ function Signup() {
       setMessage("");
       setError(null)
 
-      const {data} = await axios.post(`/api/auth/signup`,formValues)
+      const  config ={
+        headers:{
+          'Content-Type':'application/json'
+        },
+      }
+      const {data} = await axios.post(`api/auth/signup`,formValues,config)
       localStorage.setItem('userInfo',JSON.stringify(data))
       clearForm();
       navigate('/login')
