@@ -8,18 +8,20 @@ const chatRoutes = require('./routes/chatRoutes');
 const path = require('path');
 const http = require('http');
 const { Server } = require('socket.io');
+const cors = require('cors'); 
 
 dotenv.config();
 
 const cors = require('cors');
 
+
+
+const app = express();
 app.use(cors({
   origin: process.env.FRONTEND_URL || '*',
   credentials: true
 }));
 
-
-const app = express();
 app.use(express.json());
 
 connectDB();
