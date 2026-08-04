@@ -14,13 +14,13 @@ dotenv.config();
 
 const app = express();
 
-// ✅ Allowed origins list — ஒரே இடத்துல manage பண்ணு
+// Allowed origins list 
 const allowedOrigins = [
   'https://social-mediaweb-application.netlify.app',
   'http://localhost:3000'
 ];
 
-// ✅ CORS for Express routes
+//  CORS for Express routes
 app.use(cors({
   origin: function(origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
@@ -48,7 +48,7 @@ app.use('/api/chat', chatRoutes);
 
 const server = http.createServer(app);
 
-// ✅ Socket.io — ஒரே முறை define, same origins use பண்ணு
+//  Socket.io 
 const io = new Server(server, {
   cors: {
     origin: allowedOrigins,
